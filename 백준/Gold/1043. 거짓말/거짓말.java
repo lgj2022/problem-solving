@@ -1,84 +1,97 @@
-import java.util.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.StringTokenizer;
 
 public class Main {
-    static int N;
-    static int[] truth;
-    static int[] parent;
-    static List<int[]> party_list = new ArrayList<>();
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        N = Integer.parseInt(st.nextToken());
-        int M = Integer.parseInt(st.nextToken());
-
-        st = new StringTokenizer(br.readLine());
-        int truth_number = Integer.parseInt(st.nextToken());
-        if (truth_number == 0) {
-            System.out.println(M);
-            System.exit(0);
-        }
-        else{
-            truth = new int[truth_number];
-            for (int i = 0; i < truth_number; i++) {
-                truth[i] = Integer.parseInt(st.nextToken());
-            }
-
-            parent = new int[N+1];
-            init();
-            for (int i = 0; i < M; i++){
-                st = new StringTokenizer(br.readLine());
-                int party_number = Integer.parseInt(st.nextToken());
-                if (party_number == 0) {
-                    party_list.add(new int[]{});
-                    continue;
-                }
-                int[] tmp = new int[party_number];
-                int val = Integer.parseInt(st.nextToken());
-                tmp[0] = val;
-                for (int j = 1; j < party_number; j++){
-                    int item = Integer.parseInt(st.nextToken());
-                    tmp[j] = item;
-                    if (val < tmp[j]) union(val, item);
-                    else union(item, val);
-                }
-                party_list.add(tmp);
-            }
-            int ans = 0;
-
-            for (int[] tmp : party_list){
-                boolean flag = false;
-                for (int item : tmp){
-                    if (!check(item)) {
-                        flag = true;
-                        break;
-                    }
-                }
-                if (!flag) ans++;
-            }
-            System.out.println(ans);
-        }
-
-    }
-    static public void init(){
-        for (int i = 1; i <= N; i++){
-            parent[i] = i;
-        }
-    }
-    static public int find(int x){
-        if (x == parent[x]) return x;
-        else return parent[x] = find(parent[x]);
-    }
-    static public void union(int x, int y){
-        x = find(x);
-        y = find(y);
+	public static void main(String[] args) throws IOException {
+		BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(bf.readLine());
+		int n = Integer.parseInt(st.nextToken());
+		int m = Integer.parseInt(st.nextToken());
+		int parent[] = new int [n+1];
+		for (int i = 1; i < parent.length; i++) {
+			parent[i]=i;
+		}
+		st = new StringTokenizer(bf.readLine());
+		int k = Integer.parseInt(st.nextToken());
+		int arr[] = new int [k];
+		for (int i = 0; i < k; i++) {
+			arr[i]=Integer.parseInt(st.nextToken());
+		}
+		
+		//System.out.println(Arrays.toString(arr));
+		
+		ArrayList<int[]> al = new ArrayList<>();
+		for (int i = 0; i < m; i++) {
+			st= new StringTokenizer(bf.readLine());
+			int pn = Integer.parseInt(st.nextToken());
+			int tmp[] = new int [pn];
+			//int min = 987654321;
+			for (int j = 0; j < tmp.length; j++) {
+				tmp[j]=Integer.parseInt(st.nextToken());
+				//min=Math.min(min, tmp[j]);
+				if(j==0) {
+					continue;
+				}
+				unionParent(tmp[0], tmp[j], parent);
+			}
+			
+			al.add(tmp);
+			
+		}
+		int ans =0;
+		 for (int i = 0; i < al.size(); i++) {
+			int tmp[] = al.get(i);
+			int flag= 0;
+			for (int j = 0; j < arr.length; j++) {
+				if(!check(arr[j],tmp, parent)) {
+					flag=1;
+					break;
+				}
+			}
+			if(flag==1) {
+				continue;
+			}
+			else {
+				
+				//System.out.println(Arrays.toString(tmp));
+				ans++;
+			}
+				
+		}
+		 
+		//System.out.println(Arrays.toString(parent));
+		System.out.println(ans);
+		
+		
+		
+		
+	}
+	private static boolean check(int i, int[] tmp,int [] parent) {
+		// TODO Auto-generated method stub
+		int a = getParent(i, parent);
+		for (int j = 0; j < tmp.length; j++) {
+			if(a==getParent(tmp[j], parent)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	static int getParent(int x,int parent[]) {
+		if(x==parent[x]) {
+			return x;
+		}
+		else {
+			return parent[x]=getParent(parent[x], parent);
+		}
+	}
+	
+	static public void unionParent(int x, int y,int parent[]){
+        x = getParent(x, parent);
+        y = getParent(y, parent);
         if (x != y) parent[y] = x;
-    }
-    static public boolean check(int x){
-        x = find(x);
-        for (int item : truth){
-            if (x == find(item)) return false;
-        }
-        return true;
     }
 }
