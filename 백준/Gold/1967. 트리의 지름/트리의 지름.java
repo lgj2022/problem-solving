@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
@@ -41,7 +42,7 @@ public class Main {
 		boolean visit[] = new boolean[n+1];
 		visit[1]=true;
 		dfs(1,0,visit);
-		visit= new boolean[n+1];
+		visit[1]=false;
 		visit[maxnode]=true;
 		dfs(maxnode,0,visit);
 		System.out.println(max);
@@ -58,6 +59,7 @@ public class Main {
 			if(!visit[current.node]) {
 				visit[current.node]=true;
 				dfs(current.node, cost+current.weight , visit);
+				visit[current.node]=false;
 			}
 		}
 		
