@@ -140,4 +140,6 @@
 </ul>
 
 
+dikstra 문제로 어느지점까지 같이 가는게 이득인지 판별하는 문제였다
+
 > 출처: 프로그래머스 코딩 테스트 연습, https://programmers.co.kr/learn/challenges
