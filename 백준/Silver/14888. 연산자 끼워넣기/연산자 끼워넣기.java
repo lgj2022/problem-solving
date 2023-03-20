@@ -1,71 +1,70 @@
-import java.util.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
-public class Main {
-	static int maxans = -987654321;
-	static int minans = 987564321;
+public class Main{
+    static int [] num;
+    static int max =-987654321;
+    static int min = 987654321;
+    public static void main(String[] args) throws IOException {
+       BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+       int n = Integer.parseInt(bf.readLine());
+       StringTokenizer st = new StringTokenizer(bf.readLine());
+       num = new int [n];
+       for(int i =0; i<n; i++){
+           num[i]=Integer.parseInt(st.nextToken());
+       }
 
-	public static void main(String[] args) throws Exception {
-		BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-		int n = Integer.parseInt(bf.readLine());
-		int arr[] = new int[4];
-		StringTokenizer st = new StringTokenizer(bf.readLine());
-		ArrayList<Integer> al = new ArrayList<Integer>();
-		for (int i = 0; i < n; i++) {
-			al.add(Integer.parseInt(st.nextToken()));
-		}
+       st = new StringTokenizer(bf.readLine());
+       ArrayList<Integer> al = new ArrayList<>();
+       ArrayList<Integer> current = new ArrayList<>();
+       int []op= new int[4];
+       for(int i=0; i<4; i++){
+           op[i]=Integer.parseInt(st.nextToken());
 
-		st = new StringTokenizer(bf.readLine());
-		arr[0] = Integer.parseInt(st.nextToken());
-		arr[1] = Integer.parseInt(st.nextToken());
-		arr[2] = Integer.parseInt(st.nextToken());
-		arr[3] = Integer.parseInt(st.nextToken());
+           for(int j = 0; j<op[i]; j++){
+               al.add(i);
+           }
+       }
+       //중복 순열
+        boolean [] visit = new boolean[al.size()];
+       dfs(current,al,visit);
+        System.out.println(max);
+        System.out.println(min);
+    }
 
-		ArrayList<Integer> pl = new ArrayList<Integer>();
-		for (int i = 0; i < arr.length; i++) {
-			for (int j = 0; j < arr[i]; j++) {
-				pl.add(i);
-			}
-		}
-		//System.out.println(pl.toString());
+    private static void dfs(ArrayList<Integer> current, ArrayList<Integer> al, boolean[] visit) {
+        if(current.size() == al.size()){
+            int sum = num[0];
+            for (int i=0; i<current.size(); i++){
+                if(current.get(i)==0){
+                    sum = sum+num[i+1];
+                }
+                else if(current.get(i)==1){
+                    sum = sum-num[i+1];
+                }
+                else if(current.get(i)==2){
+                    sum = sum * num[i+1];
+                }
+                else{
+                    sum = sum/num[i+1];
+                }
+            }
+            max = Math.max(sum,max);
+            min = Math.min(sum,min);
+            return;
+        }
+        for(int i=0; i<al.size() ; i++){
+            if(!visit[i]){
+                visit[i]=true;
+                current.add(al.get(i));
+                dfs(current,al,visit);
+                visit[i]=false;
+                current.remove(current.size()-1);
+            }
 
-		permutation(al, pl, new ArrayList<Integer>(), new boolean[pl.size()]);
-		System.out.println(maxans);
-		System.out.println(minans);
-	}
-
-	private static void permutation(ArrayList<Integer> al, ArrayList<Integer> pl, ArrayList<Integer> current,
-			boolean visit[]) {
-		// TODO Auto-generated method stub
-
-		if (current.size() == pl.size()) {
-			int sum = al.get(0);
-			//System.out.println(sum);
-			for (int i = 0; i < current.size(); i++) {
-				if (current.get(i) == 0) {
-					sum=sum+al.get(i+1);
-				} else if (current.get(i) == 1) {
-					sum=sum-al.get(i+1);
-				} else if (current.get(i) == 2) {
-					sum=sum*al.get(i+1);
-				} else {
-					sum=sum/al.get(i+1);
-				}
-			}
-			maxans= Math.max(sum, maxans);
-			minans= Math.min(sum, minans);
-			
-			return;
-		}
-		for (int i = 0; i < pl.size(); i++) {
-			if (!visit[i]) {
-				current.add(pl.get(i));
-				visit[i] = true;
-				permutation(al, pl, current, visit);
-				current.remove(current.size() - 1);
-				visit[i] = false;
-			}
-		}
-
-	}
+        }
+    }
 }
